@@ -12,7 +12,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,10 +21,7 @@ import com.google.gson.Gson;
 @RestController
 public class TokenController {
 	public Logger logger = Logger.getLogger("terranLog");
-	 @RequestMapping("/terranrest/servicesed/{alias}")  
-	    public String testing(@Context HttpServletRequest requestContext,@RequestBody String value,@PathVariable("alias") String alias){ 
-		 return "abcdEFG";
-	 }
+
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping("/encrypt")
@@ -36,12 +32,12 @@ public class TokenController {
 	        String jwt =TokenUtil.TokenEncrypt (map);
 	        mpReturn.put("serial", jwt.toString());
 		} catch (ParseException e) {
-			e.printStackTrace();
+			mpReturn.put("errMsg", "Invalid to encrypt : "+e.toString());
 		}
 		
 		return convertJson(mpReturn);
 	}
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping("/decrypt")
 	public String decrypt(@Context HttpServletRequest requestContext,@RequestBody String value) {
 		Map mpReturn=new HashMap();
@@ -49,7 +45,7 @@ public class TokenController {
 			Map map=getTerranServicesJSonEngine(value);
 			mpReturn=TokenUtil.TokenDecrypt(map.get("serial").toString());
 		} catch (ParseException e) {
-			e.printStackTrace();
+			mpReturn.put("errMsg", "Invalid to decrypt : "+e.toString());
 		}
 		
 		return convertJson(mpReturn);
